@@ -8,3 +8,13 @@ sys.stdout = sys.__stdout__
 
 # Get the HTML output as a string
 html_table = html_output.getvalue()
+
+
+
+
+#BORDERS
+
+styled_df = df.style.set_table_styles(
+    [{'selector': 'td, th',
+      'props': [('border', '1px solid black')]}]
+)
