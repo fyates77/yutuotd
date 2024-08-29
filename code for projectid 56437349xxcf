@@ -1,0 +1,14 @@
+import io
+import contextlib
+
+def capture_print_output(func, *args, **kwargs):
+    with io.StringIO() as buf, contextlib.redirect_stdout(buf):
+        func(*args, **kwargs)
+        return buf.getvalue()
+
+# Function to capture
+def my_print_function(text):
+    print(text)
+
+# Capture the output of the print function
+captured_output = capture_print_output(my_print_function, "Hello, world!")
