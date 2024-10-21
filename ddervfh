@@ -1,0 +1,26 @@
+CREATE OR REPLACE TABLE NumberSums (
+    number INT,
+    sum_even_divisors INT
+);
+
+-- Insert values into the table
+WITH Sequence AS (
+    SELECT SEQ4() + 1 AS number
+    FROM TABLE(GENERATOR(ROWCOUNT => 100))  -- Change 100 to the desired max value
+),
+EvenDivisors AS (
+    SELECT n.number, d.divisor
+    FROM Sequence n
+    JOIN LATERAL (
+        SELECT div AS divisor
+        FROM TABLE(GENERATOR(ROWCOUNT => n.number)) AS div_table
+        WHERE n.number % (SEQ4() + 1) = 0
+          AND (SEQ4() + 1) % 2 = 0
+    ) d ON TRUE
+)
+INSERT INTO NumberSums
+SELECT n.number, COALESCE(SUM(d.divisor), 0) AS sum_even_divisors
+FROM Sequence n
+LEFT JOIN EvenDivisors d ON n.number = d.number
+GROUP BY n.number
+ORDER BY n.number;
